@@ -2,7 +2,6 @@ import { combineReducers, configureStore, createSlice } from '@reduxjs/toolkit'
 import { loadLoggedInUserFromLocalStorage, loadUsersFromLocalStorage } from './loadUsers';
 
 const initialUsers = loadUsersFromLocalStorage();
-
 const loggedUser = loadLoggedInUserFromLocalStorage()
 
 
@@ -32,6 +31,16 @@ const usersReducer = (state: any = { users: initialUsers }, action) => {
                     user.username === username.username ? { ...user, score } : user
                 ),
             };
+        case 'GET_USERS':
+            // const usernameToRetrieve = action.payload;
+            // const retrievedUser = state.users.find(user => user.username === usernameToRetrieve.username);
+            // if (retrievedUser) {
+            //     return {
+            //         ...state,
+            //         retrievedUser,
+            //     };
+            // }
+            return state.users;
         case 'GET_USER':
             const usernameToRetrieve = action.payload;
             const retrievedUser = state.users.find(user => user.username === usernameToRetrieve.username);

@@ -13,10 +13,6 @@ const App = () => {
   const { users } = useSelector((state: any) => state.users);
   const loggedInUser = useSelector((state: any) => state.loggedInUser.loggedInUser);
 
-  console.log('loggedInUser APP', loggedInUser)
-  console.log('entrou',)
-
-
   return (
     <div className="App">
       <Router>
@@ -31,7 +27,7 @@ const App = () => {
             element={loggedInUser ? <PrivateRoutes /> : <Navigate to="/" />}
           >
             <Route path='game' element={<GamePage />} />
-            <Route path="game/score" element={<ScorePage />} />
+            <Route path="game/score" element={<ScorePage userScore={null} onClose={null} />} />
           </Route>
         </Routes>
       </Router>
