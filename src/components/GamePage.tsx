@@ -6,7 +6,7 @@ import store from '../utils/store';
 import ScorePage from './ScorePage';
 
 
-function GamePage({ defaultImage, pexelCards }) {
+function GamePage({ pexelCards }) {
 
     const loggedInUser = useSelector((state: any) => state.loggedInUser.loggedInUser);
 
@@ -15,19 +15,12 @@ function GamePage({ defaultImage, pexelCards }) {
 
     const [seconds, setSeconds] = useState<number>(0);
     const [timerRunning, setTimerRunning] = useState<boolean>(false);
-    // const [gameStarted, setGameStarted] = useState<boolean>(false)
 
     const [cards, setCards] = useState([])
-    const [turns, setTurns] = useState(0)
     const [choiceOne, setChoiceOne] = useState(null)
     const [choiceTwo, setChoiceTwo] = useState(null)
     const [disabled, setDisabled] = useState(false)
     const [prevCardId, setPrevCardId] = useState(null);
-
-    const [retrievedUser, setRetrievedUser] = useState(null)
-
-
-    const [winnerSeconds, setWinnerSeconds] = useState(null)
 
     const [gameStarted, setGameStarted] = useState(false);
     const [gameEnded, setGameEnded] = useState(false);
@@ -37,8 +30,6 @@ function GamePage({ defaultImage, pexelCards }) {
     const navigate = useNavigate();
 
 
-    const [duplicatedImages, setDuplicatedImages] = useState(null)
-
     const handleLogout = () => {
         dispatch({ type: 'LOGOUT' });
         navigate('/');
@@ -46,16 +37,6 @@ function GamePage({ defaultImage, pexelCards }) {
 
 
 
-    // const getUserScore = async () => {
-    //     await dispatch({ type: 'GET_USER', payload: loggedInUser });
-    //     const updatedState = store.getState();
-    //     const retrieved = updatedState.users.retrievedUser;
-    //     setRetrievedUser(retrieved)
-    //     console.log('retrievedUser', retrievedUser)
-
-    //     setUserScore(retrieved ? retrieved.score : null)
-    //     console.log('userScore', userScore)
-    // };
     const getUserScore = async () => {
         await dispatch({ type: 'GET_USER', payload: loggedInUser });
         const updatedState = store.getState();
@@ -68,26 +49,16 @@ function GamePage({ defaultImage, pexelCards }) {
         getUserScore()
     }, [])
 
-    const updatedScore = (seconds) => {
-        console.log('seconds in UPDATE SCORE', seconds)
 
-        if (seconds <= userScore) {
-            dispatch({
-                type: 'UPDATE_USER_SCORE',
-                payload: { username: loggedInUser, score: seconds }
-            });
-        }
-        getUserScore()
-    }
-
-    const updatedScoreToTest = () => {
-
+    const updatedScore = (winnerSeconds) => {
+        console.log('winnerSeconds inside updatedScore', winnerSeconds)
         dispatch({
             type: 'UPDATE_USER_SCORE',
-            payload: { username: loggedInUser, score: 100 }
+            payload: { username: loggedInUser, score: winnerSeconds }
         });
-        getUserScore()
+        getUserScore();
     }
+
 
     const handleOpenScoreModal = () => {
         setShowScoresModal(true)
@@ -96,7 +67,12 @@ function GamePage({ defaultImage, pexelCards }) {
 
     const handleCloseScoreModal = () => {
         setShowScoresModal(false)
-        setTimerRunning(true)
+        if (gameStarted) {
+            setTimerRunning(true)
+        }
+        if (gameEnded) {
+            shuffleCards()
+        }
     }
 
 
@@ -104,14 +80,9 @@ function GamePage({ defaultImage, pexelCards }) {
         setGameStarted(true)
         setSeconds(0)
 
-        // const shuffledCards = [...cardImages, ...cardImages].sort(() => Math.random() - 0.5).map(card => ({ ...card, id: Math.random() }))
-        // console.log('shuffledCards', shuffledCards)
-        console.log('pexelCards', pexelCards)
-
         setChoiceOne(null)
         setChoiceTwo(null)
         setCards(pexelCards)
-        setTurns(0)
         setTimerRunning(true)
     }
 
@@ -127,7 +98,6 @@ function GamePage({ defaultImage, pexelCards }) {
     const resetTurn = () => {
         setChoiceOne(null);
         setChoiceTwo(null);
-        setTurns(prevTurns => prevTurns + 1);
         setDisabled(false);
         setPrevCardId(null);
     }
@@ -154,10 +124,7 @@ function GamePage({ defaultImage, pexelCards }) {
     }, [choiceOne, choiceTwo])
 
 
-    // useEffect(() => {
-    //     shuffleCards()
-    //     // setTimerRunning(true)
-    // }, [])
+
 
     useEffect(() => {
         let timerId;
@@ -172,22 +139,10 @@ function GamePage({ defaultImage, pexelCards }) {
     }, [timerRunning]);
 
 
-    // useEffect(() => {
-    //     const allMatched = cards.every(card => card.matched);
-
-    //     if (allMatched) {
-    //         // updateUserScore(seconds)
-    //         console.log('You won with the score of ', seconds)
-    //         setWinnerSeconds(seconds)
-    //         updatedScore(seconds) //AQUIIIIIIIIII!!!!!!!!!!!!!!!!!!!!!!
-    //     }
-    // }, [cards]);
 
 
     useEffect(() => {
         const allMatched = cards.every(card => card.matched);
-        console.log('allMatched', allMatched)
-
         if (gameStarted && allMatched) {
             setTimerRunning(false)
             setGameEnded(true);
@@ -199,20 +154,21 @@ function GamePage({ defaultImage, pexelCards }) {
         if (gameEnded) {
             console.log('gameEnded', gameEnded)
             console.log('You won with the score of ', seconds);
-            setWinnerSeconds(seconds);
             updatedScore(seconds);
         }
     }, [gameEnded]);
 
 
+
+
     return (
         <div className="bg-blue-200 min-h-screen flex justify-center items-center z-0">
-            <div>123
-                {/* <img src={defaultImage[0]} alt="" /> */}
+            <div>
                 <h1 className="text-2xl font-bold mb-4">Game Page</h1>
                 <h1 className="text-5xl font-bold mb-4">{loggedInUser.username}</h1>
                 <p className="mb-4">Score - {userScore}</p>
                 <p>Timer: {seconds}</p>
+
                 <div className='mb-4'>
                     <button
                         onClick={handleLogout}
@@ -227,22 +183,10 @@ function GamePage({ defaultImage, pexelCards }) {
                     >
                         Scores
                     </button>
-                    <button
-                        onClick={updatedScoreToTest}
-                        className="ml-2 p-2 bg-blue-500 text-white rounded"
-                    >
-                        updatedScoreToTest
-                    </button>
 
-                    <button
-                        onClick={updatedScore}
-                        className="ml-2 p-2 bg-blue-500 text-white rounded"
-                    >
-                        updateScore
-                    </button>
                 </div>
 
-                {showScoresModal && <ScorePage userScore={userScore} onClose={handleCloseScoreModal} />}
+                {showScoresModal && <ScorePage onClose={handleCloseScoreModal} />}
                 <div className="grid grid-cols-4 grid-rows-3 gap-4">
                     {cards.map((card) => (
                         <Card
@@ -251,12 +195,9 @@ function GamePage({ defaultImage, pexelCards }) {
                             handleChoice={handleChoice}
                             flipped={card === choiceOne || card === choiceTwo || card.matched}
                             disabled={disabled}
-                            defaultImage={defaultImage ? defaultImage[0]?.src.medium : null}
                         />
                     ))}
                 </div>
-
-                <p className="text-center mt-8">Turns: {turns}</p>
             </div>
         </div>
     );
