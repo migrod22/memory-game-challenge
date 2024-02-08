@@ -19,16 +19,35 @@ const usersReducer = (state: any = { users: initialUsers }, action) => {
             };
         case 'UPDATE_USER_SCORE':
             const { username, score } = action.payload;
-            console.log('{username, score}', { username, score })
+            const userToUpdate = state.users.find(user => user.username === username.username);
+
+            if (userToUpdate.score === 0 || userToUpdate.score == null) {
+                return {
+                    ...state,
+                    users: state.users.map(user => user.username === username.username ? { ...user, score } : user
+                    ),
+                };
+            } else if (userToUpdate.score !== 0 && score < userToUpdate.score) {
+                return {
+                    ...state,
+                    users: state.users.map((user) =>
+                        user.username === username.username ? { ...user, score } : user
+                    ),
+                };
+            }
+            return state;
+        case 'UPDATE_USER_NAME':
+            const { oldUsername, newUsername } = action.payload;
+            if (state.users.find(user => user.username === newUsername)) {
+                alert("Username already exists")
+                return state;
+            }
             return {
                 ...state,
-                users: state.users.map((user) =>
-                    user.username === username.username ? { ...user, score } : user
-                ),
+                users: state.users.map(user =>
+                    user.username === oldUsername ? { ...user, username: newUsername } : user
+                )
             };
-
-        case 'GET_USERS':
-            return state.users;
         case 'GET_USER':
             const usernameToRetrieve = action.payload;
             const retrievedUser = state.users.find(user => user.username === usernameToRetrieve.username);

@@ -1,4 +1,4 @@
-export default function Card({ card, handleChoice, flipped, disabled, defaultImage }) {
+export default function Card({ card, handleChoice, flipped, disabled }) {
 
     const handleClick = () => {
         if (!disabled) {

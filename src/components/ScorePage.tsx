@@ -1,12 +1,13 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 
-export default function ScorePage({ onClose, userScore }) {
+export default function ScorePage({ onClose }) {
 
     const allUsers = useSelector((state: any) => state.users.users);
-    console.log('allUsers', allUsers)
 
-    const sortedUsers = allUsers.slice().sort((a, b) => a.score - b.score);
+    const filteredUsers = allUsers.filter(user => user.score !== 0 && user.score !== null);
+
+    const sortedUsers = filteredUsers.slice().sort((a, b) => a.score - b.score);
 
     return (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
