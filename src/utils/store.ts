@@ -1,12 +1,12 @@
-import { combineReducers, configureStore, createSlice } from '@reduxjs/toolkit'
-import { loadLoggedInUserFromLocalStorage, loadUsersFromLocalStorage } from './loadUsers';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { loadGameStateFromLocalStorage, loadLoggedInUserFromLocalStorage, loadUsersFromLocalStorage } from './loadUsers';
 
 const initialUsers = loadUsersFromLocalStorage();
 const loggedUser = loadLoggedInUserFromLocalStorage()
-
-
+// const gameStateStored = loadGameStateFromLocalStorage()
 
 const usersReducer = (state: any = { users: initialUsers }, action) => {
+
     switch (action.type) {
         case 'ADD_USER':
             const usernameToAdd = action.payload;
@@ -36,18 +36,7 @@ const usersReducer = (state: any = { users: initialUsers }, action) => {
                 };
             }
             return state;
-        case 'UPDATE_USER_NAME':
-            const { oldUsername, newUsername } = action.payload;
-            if (state.users.find(user => user.username === newUsername)) {
-                alert("Username already exists")
-                return state;
-            }
-            return {
-                ...state,
-                users: state.users.map(user =>
-                    user.username === oldUsername ? { ...user, username: newUsername } : user
-                )
-            };
+
         case 'GET_USER':
             const usernameToRetrieve = action.payload;
             const retrievedUser = state.users.find(user => user.username === usernameToRetrieve.username);
@@ -82,59 +71,46 @@ const loggedInUserReducer = (state = { loggedInUser: null }, action) => {
     }
 };
 
-// const gameStateReducer = (state = {
-//     cards: null,
-//     turns: null,
-//     choiceOne: null,
-//     choiceTwo: null,
-//     disabled: null,
-//     seconds: null,
-//     timerRunning: null,
-//     userScore: null
-// }, action) => {
-//     switch (action.type) {
-//         case 'SET_GAME_STATE':
-//             const gameState = action.payload;
-//             console.log('gameState action.payload!!!!!!!!!', gameState)
-//             return {
-//                 ...state,
-//                 loggedInUser: {
-//                     cards: gameState.cards,
-//                     turns: gameState.turns,
-//                     choiceOne: gameState.choiceOne,
-//                     choiceTwo: gameState.choiceTwo,
-//                     disabled: gameState.disabled,
-//                     seconds: gameState.seconds,
-//                     timerRunning: gameState.timerRunning,
-//                     userScore: gameState.userScore
-//                 },
-//             };
+const gameStateReducer = (state = {
+    cards: null,
+    turns: null,
+    choiceOne: null,
+    choiceTwo: null,
+    disabled: null,
+    seconds: null,
+    timerRunning: null,
+    userScore: null
+}, action) => {
+    switch (action.type) {
+        case 'SET_GAME_STATE':
+            return action.payload;
+        default:
+            return state;
+    }
+};
 
-//         default:
-//             return state;
-//     }
-// };
-
-
+const rootReducer = combineReducers({
+    users: usersReducer,
+    loggedInUser: loggedInUserReducer,
+    gameState: gameStateReducer
+});
 
 const store = configureStore({
-    reducer: {
-        users: usersReducer,
-        loggedInUser: loggedInUserReducer,
-        // gameState: gameStateReducer
-    },
+    reducer: rootReducer,
     preloadedState: {
         loggedInUser: {
             loggedInUser: loggedUser,
         },
+        // gameState: gameStateStored,
     },
-})
+});
 
 store.subscribe(() => {
     const state = store.getState();
     localStorage.setItem('users', JSON.stringify(state.users.users));
     localStorage.setItem('loggedInUser', JSON.stringify(state.loggedInUser.loggedInUser));
     // localStorage.setItem('gameState', JSON.stringify(state.gameState));
+
 });
 
-export default store
+export default store;
