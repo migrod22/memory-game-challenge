@@ -183,7 +183,6 @@ function GamePage({ pexelCards }) {
 
 
     useEffect(() => {
-        console.log('gameEnded', gameEnded)
         if (gameEnded) {
             updatedScore(seconds);
         }
