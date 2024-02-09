@@ -6,12 +6,13 @@ import PrivateRoutes from './utils/PrivateRoutes';
 import { useSelector } from 'react-redux';
 import GamePage from './components/GamePage';
 import axios from 'axios';
+import { CardType, LoggedUserType } from './utils/interfaces';
 
 const App = () => {
 
-  const loggedInUser = useSelector((state: any) => state.loggedInUser.loggedInUser);
+  const loggedInUser = useSelector((state: LoggedUserType) => state.loggedInUser.loggedInUser);
 
-  const [pexelCards, setPexelCards] = useState([])
+  const [pexelCards, setPexelCards] = useState<CardType[]>([])
 
 
   const fetchImages = async () => {
@@ -35,6 +36,7 @@ const App = () => {
   useEffect(() => {
     fetchImages();
   }, []);
+
 
   return (
     <div className="App">
