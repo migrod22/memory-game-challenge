@@ -4,5 +4,4 @@
   publish = "build"
 
 [context.production.environment]
-  REACT_APP_PEXELS_API_KEY = "84CptlFQLYfWj0euXgTzdGohgvSjyaG03MDtDgTLnK6CITNCybJKGjTZ"
   BROWSER = "none"
