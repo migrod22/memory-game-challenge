@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import store from '../utils/store';
 import ScorePage from './ScorePage';
-import { CardType, LoggedUserType } from '../utils/interfaces';
+import { CardType, GameStateType, LoggedUserType } from '../utils/interfaces';
 
 
 function GamePage({ pexelCards }) {
@@ -178,14 +178,14 @@ function GamePage({ pexelCards }) {
             setTimerRunning(false)
             setGameEnded(true);
         }
-    }, [cards, gameStarted, gameEnded]);
+    }, [cards]);
 
 
     useEffect(() => {
         if (gameEnded) {
             updatedScore(seconds);
         }
-    }, [gameEnded, seconds]);
+    }, [gameEnded]);
 
 
     useEffect(() => {
@@ -201,7 +201,7 @@ function GamePage({ pexelCards }) {
                 userScore
             }
         });
-    }, [dispatch, cards, choiceOne, choiceTwo, disabled, seconds, timerRunning, userScore]);
+    }, [cards, choiceOne, choiceTwo, disabled, timerRunning, userScore]);
 
 
     // I've left this comment below because I intend to fix this situation in the future
