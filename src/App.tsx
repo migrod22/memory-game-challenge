@@ -14,6 +14,8 @@ const App = () => {
 
   const [pexelCards, setPexelCards] = useState<CardType[]>([])
 
+  console.log('pexelCards', pexelCards)
+
 
   const fetchImages = async () => {
     try {

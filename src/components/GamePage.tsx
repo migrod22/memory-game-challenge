@@ -59,7 +59,6 @@ function GamePage({ pexelCards }) {
         getUserScore();
     }
 
-
     const handleOpenScoreModal = () => {
         setShowScoresModal(true)
         setTimerRunning(false);
