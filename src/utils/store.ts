@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { loadGameStateFromLocalStorage, loadLoggedInUserFromLocalStorage, loadUsersFromLocalStorage } from './loadUsers';
+import { loadLoggedInUserFromLocalStorage, loadUsersFromLocalStorage } from './loadUsers';
 
 const initialUsers = loadUsersFromLocalStorage();
 const loggedUser = loadLoggedInUserFromLocalStorage()
